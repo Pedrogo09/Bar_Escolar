@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Pedido {{ order.order_number }} - Bar Escolar{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold"><i class="fas fa-receipt"></i> Pedido {{ order.order_number }}</h1>
+        <a href="{% url 'bar_app:order_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Itens do Pedido</h5>
+                    
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Preço Unitário</th>
+                                    <th>Quantidade</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                <tr>
+                                    <td>{{ item.product.name }}</td>
+                                    <td>€{{ item.unit_price }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td><strong>€{{ item.subtotal }}</strong></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td><h4 class="text-primary mb-0">€{{ order.total_amount }}</h4></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    {% if order.notes %}
+                    <div class="alert alert-info">
+                        <strong><i class="fas fa-sticky-note"></i> Notas:</strong>
+                        <p class="mb-0">{{ order.notes }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Detalhes do Pedido</h5>
+                    
+                    <div class="mb-3">
+                        <strong>Estado:</strong><br>
+                        {% if order.status == 'pending' %}
+                        <span class="badge bg-warning">Pendente</span>
+                        {% elif order.status == 'confirmed' %}
+                        <span class="badge bg-info">Confirmado</span>
+                        {% elif order.status == 'preparing' %}
+                        <span class="badge bg-primary">Em Preparação</span>
+                        {% elif order.status == 'ready' %}
+                        <span class="badge bg-success">Pronto</span>
+                        {% elif order.status == 'delivered' %}
+                        <span class="badge bg-secondary">Entregue</span>
+                        {% else %}
+                        <span class="badge bg-danger">Cancelado</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Data de Levantamento:</strong><br>
+                        <i class="fas fa-calendar"></i> {{ order.scheduled_date|date:"d/m/Y" }}<br>
+                        <i class="fas fa-clock"></i> {{ order.scheduled_time|time:"H:i" }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Método de Pagamento:</strong><br>
+                        {% if order.payment_method == 'card' %}
+                        <i class="fas fa-credit-card"></i> Cartão Pré-carregado
+                        {% else %}
+                        <i class="fas fa-university"></i> Multibanco
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>Criado em:</strong><br>
+                        {{ order.created_at|date:"d/m/Y H:i" }}
+                    </div>
+                    
+                    {% if order.is_priority %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-star"></i> <strong>Pedido Prioritário</strong>
+                    </div>
+                    {% endif %}
+                    
+                    {% if order.can_be_cancelled %}
+                    <a href="{% url 'bar_app:cancel_order' order.pk %}" class="btn btn-danger w-100" onclick="return confirm('Tem certeza que deseja cancelar este pedido?')">
+                        <i class="fas fa-times"></i> Cancelar Pedido
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

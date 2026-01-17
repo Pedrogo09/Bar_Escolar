@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Registar - Bar Escolar{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                        <h2 class="fw-bold">Criar Conta</h2>
+                        <p class="text-muted">Junte-se ao Bar Escolar</p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_username" class="form-label">Nome de Utilizador</label>
+                                <input type="text" name="username" class="form-control" id="id_username" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_email" class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" id="id_email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_first_name" class="form-label">Primeiro Nome</label>
+                                <input type="text" name="first_name" class="form-control" id="id_first_name" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_last_name" class="form-label">Último Nome</label>
+                                <input type="text" name="last_name" class="form-control" id="id_last_name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_user_type" class="form-label">Tipo de Utilizador</label>
+                            <select name="user_type" class="form-select" id="id_user_type" required>
+                                <option value="student">Aluno</option>
+                                <option value="teacher">Professor</option>
+                                <option value="staff">Funcionário</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_password1" class="form-label">Palavra-passe</label>
+                                <input type="password" name="password1" class="form-control" id="id_password1" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_password2" class="form-label">Confirmar Palavra-passe</label>
+                                <input type="password" name="password2" class="form-control" id="id_password2" required>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mb-3">
+                            <i class="fas fa-user-plus"></i> Registar
+                        </button>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">Já tem conta? <a href="{% url 'bar_app:login' %}">Entrar</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

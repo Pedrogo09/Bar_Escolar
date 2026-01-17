@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Admin - Bar Escolar{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <h1 class="mb-4 fw-bold"><i class="fas fa-tachometer-alt"></i> Dashboard Administrativo</h1>
+    
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-shopping-cart"></i> Pedidos Hoje</h5>
+                    <h2 class="mb-0">{{ total_orders_today }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-clock"></i> Pedidos Pendentes</h5>
+                    <h2 class="mb-0">{{ pending_orders }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-box"></i> Stock Baixo</h5>
+                    <h2 class="mb-0">{{ low_stock_products }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-chart-line"></i> Menu Rápido</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'bar_app:manage_orders' %}" class="btn btn-light btn-sm">Ver Pedidos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ações Rápidas -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3"><i class="fas fa-bolt"></i> Ações Rápidas</h5>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="{% url 'bar_app:manage_orders' %}" class="btn btn-primary">
+                            <i class="fas fa-clipboard-list"></i> Gerir Pedidos
+                        </a>
+                        <a href="{% url 'bar_app:manage_products' %}" class="btn btn-success">
+                            <i class="fas fa-box"></i> Gerir Produtos
+                        </a>
+                        <a href="{% url 'bar_app:manage_stock' %}" class="btn btn-warning">
+                            <i class="fas fa-warehouse"></i> Gerir Stock
+                        </a>
+                        <a href="/admin/" class="btn btn-dark" target="_blank">
+                            <i class="fas fa-cog"></i> Painel Admin Django
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pedidos Recentes -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-3"><i class="fas fa-history"></i> Pedidos Recentes</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nº Pedido</th>
+                            <th>Cliente</th>
+                            <th>Data/Hora</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td><strong>{{ order.order_number }}</strong></td>
+                            <td>{{ order.user.get_full_name|default:order.user.username }}</td>
+                            <td>{{ order.scheduled_date|date:"d/m/Y" }} {{ order.scheduled_time|time:"H:i" }}</td>
+                            <td>€{{ order.total_amount }}</td>
+                            <td>
+                                {% if order.status == 'pending' %}
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                                {% elif order.status == 'ready' %}
+                                <span class="badge bg-success">Pronto</span>
+                                {% else %}
+                                <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'bar_app:order_detail' order.pk %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Nenhum pedido recente</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

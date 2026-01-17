@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - Bar Escolar{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4 fw-bold"><i class="fas fa-credit-card"></i> Finalizar Pedido</h1>
+    
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Detalhes do Pedido</h5>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="scheduled_date" class="form-label">Data de Levantamento</label>
+                            <input type="date" name="scheduled_date" id="scheduled_date" class="form-control" required min="{{ today }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="scheduled_time" class="form-label">Hora de Levantamento</label>
+                            <input type="time" name="scheduled_time" id="scheduled_time" class="form-control" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="payment_method" class="form-label">Método de Pagamento</label>
+                            <select name="payment_method" id="payment_method" class="form-select" required>
+                                <option value="card">Cartão Pré-carregado (Saldo: €{{ user.balance }})</option>
+                                <option value="atm">Multibanco</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notas (opcional)</label>
+                            <textarea name="notes" id="notes" class="form-control" rows="3" placeholder="Alguma observação especial?"></textarea>
+                        </div>
+                        
+                        {% if user.is_priority_user %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-star"></i> <strong>Pedido Prioritário</strong> - Como {{ user.get_user_type_display }}, o seu pedido terá prioridade.
+                        </div>
+                        {% endif %}
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-check"></i> Confirmar Pedido
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Resumo</h5>
+                    
+                    {% for item in items %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ item.quantity }}x {{ item.product.name }}</span>
+                        <strong>€{{ item.subtotal }}</strong>
+                    </div>
+                    {% endfor %}
+                    
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5>Total:</h5>
+                        <h5 class="text-primary">€{{ total }}</h5>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="balance-card">
+                <small>Saldo Disponível</small>
+                <h4 class="mb-0">€{{ user.balance }}</h4>
+                {% if user.balance < total %}
+                <small class="text-danger">Saldo insuficiente para pagamento com cartão</small>
+                <a href="{% url 'bar_app:topup' %}" class="btn btn-dark btn-sm mt-2 w-100">
+                    <i class="fas fa-plus"></i> Carregar Saldo
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set minimum date to today
+    document.getElementById('scheduled_date').min = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Carregar Saldo - Bar Escolar{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-wallet fa-3x text-primary mb-3"></i>
+                        <h2 class="fw-bold">Carregar Saldo</h2>
+                        <p class="text-muted">Adicione saldo ao seu cartão escolar</p>
+                    </div>
+                    
+                    <div class="balance-card mb-4 text-center">
+                        <small>Saldo Atual</small>
+                        <h2 class="mb-0">€{{ user.balance }}</h2>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="amount" class="form-label">Valor a Carregar</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text">€</span>
+                                <input type="number" name="amount" id="amount" class="form-control" step="0.01" min="5" max="100" required>
+                            </div>
+                            <small class="text-muted">Mínimo: €5 | Máximo: €100</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Valores Rápidos</label>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('amount').value='10'">€10</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('amount').value='20'">€20</button>
+                                <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('amount').value='50'">€50</button>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-plus"></i> Confirmar Carregamento
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'bar_app:profile' %}" class="text-muted">
+                            <i class="fas fa-arrow-left"></i> Voltar ao Perfil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

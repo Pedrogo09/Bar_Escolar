@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Menu - Bar Escolar{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4 fw-bold"> O Nosso Menu</h1>
+    
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form method="get" class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Pesquisar produtos..." value="{{ search }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Pesquisar
+                </button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" onchange="window.location='?category='+this.value">
+                <option value="">Todas as Categorias</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    
+    <!-- Produtos -->
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-md-4 col-lg-3">
+            <div class="card h-100">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center product-image">
+                    <i class="fas fa-utensils fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <span class="badge bg-secondary mb-2">{{ product.category.name }}</span>
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text text-muted flex-grow-1">{{ product.description|truncatewords:8 }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <h4 class="text-primary mb-0">€{{ product.price }}</h4>
+                        {% if user.is_authenticated %}
+                            {% if product.is_in_stock %}
+                            <a href="{% url 'bar_app:add_to_cart' product.id %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-cart-plus"></i>
+                            </a>
+                            {% else %}
+                            <span class="badge bg-danger">Sem Stock</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <small class="text-muted mt-2">Stock: {{ product.stock }} unidades</small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle"></i> Nenhum produto encontrado.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
