@@ -3,19 +3,19 @@ Configurações do Django para o projeto bar_escola Order System
 """
 
 from pathlib import Path
-import os
+from decouple import config  # <<< Importa decouple para ler .env
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Segurança
-SECRET_KEY = os.environ.get(
+SECRET_KEY = config(
     'SECRET_KEY',
-    'django-insecure-dev-key-only-for-local'
+    default='django-insecure-dev-key-only-for-local'  # fallback para dev local
 )
 
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if not DEBUG else []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',') if not DEBUG else []
 
 # Application definition
 INSTALLED_APPS = [
